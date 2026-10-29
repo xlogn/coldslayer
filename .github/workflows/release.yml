@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            archive_suffix: darwin_arm64
+          - os: macos-13
+            target: x86_64-apple-darwin
+            archive_suffix: darwin_amd64
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            archive_suffix: linux_amd64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust target
+        run: rustup target add ${{ matrix.target }}
+      - name: Build release binary
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Package tarball
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p stage/skills/coldslayer
+          cp "target/${{ matrix.target }}/release/csl" stage/csl
+          cp README.md LICENSE stage/
+          cp skills/coldslayer/SKILL.md stage/skills/coldslayer/SKILL.md
+          tar -czf "coldslayer_${VERSION}_${{ matrix.archive_suffix }}.tar.gz" -C stage csl README.md LICENSE skills
+      - name: Upload to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          gh release upload "${GITHUB_REF_NAME}" "coldslayer_${VERSION}_${{ matrix.archive_suffix }}.tar.gz" --clobber || \
+          gh release create "${GITHUB_REF_NAME}" "coldslayer_${VERSION}_${{ matrix.archive_suffix }}.tar.gz" --title "Coldslayer ${GITHUB_REF_NAME}" --generate-notes

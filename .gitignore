@@ -1,0 +1,9 @@
+/target/
+/dist/
+/csl
+/coldslayer
+*.pack.zst
+*.db
+*.db-shm
+*.db-wal
+.DS_Store
