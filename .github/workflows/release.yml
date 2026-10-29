@@ -45,5 +45,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          gh release upload "${GITHUB_REF_NAME}" "coldslayer_${VERSION}_${{ matrix.archive_suffix }}.tar.gz" --clobber || \
-          gh release create "${GITHUB_REF_NAME}" "coldslayer_${VERSION}_${{ matrix.archive_suffix }}.tar.gz" --title "Coldslayer ${GITHUB_REF_NAME}" --generate-notes
+          gh release upload "${GITHUB_REF_NAME}" "coldslayer_${VERSION}_${{ matrix.archive_suffix }}.tar.gz" || \
+          gh release create "${GITHUB_REF_NAME}" "coldslayer_${VERSION}_${{ matrix.archive_suffix }}.tar.gz" --title "Coldslayer ${GITHUB_REF_NAME}" --generate-notes || true

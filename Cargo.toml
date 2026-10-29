@@ -1,6 +1,6 @@
 [package]
 name = "coldslayer"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["Karan (xlogn) <karnk2708@gmail.com>"]
 description = "AI-Native Cold File Archiver (csl) with Seekable Zstandard Packs & Embedded Tantivy BM25/Fuzzy Search"
