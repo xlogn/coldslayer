@@ -49,22 +49,80 @@ pub fn default_ignore_patterns() -> Vec<String> {
 
 pub fn default_purge_patterns() -> Vec<String> {
     vec![
+        // JavaScript / TypeScript / Web / Frontend Frameworks
         "node_modules",
+        ".pnpm-store",
+        ".yarn",
+        "bower_components",
+        "dist",
+        "build",
+        "out",
+        ".next",
+        ".nuxt",
+        ".output",
+        ".svelte-kit",
+        ".astro",
+        ".angular",
+        ".vite",
+        ".parcel-cache",
+        ".turbo",
+        ".nx",
+        ".docusaurus",
+        ".expo",
+        ".expo-shared",
+        ".vercel",
+        ".netlify",
+        ".serverless",
+        ".wrangler",
+        "coverage",
+        ".nyc_output",
+        ".eslintcache",
+        ".stylelintcache",
+        ".sass-cache",
+        // Python & Data Science
         "__pycache__",
         ".pytest_cache",
         ".mypy_cache",
         ".ruff_cache",
+        ".pytype",
+        ".pyre",
+        ".hypothesis",
+        ".tox",
+        ".nox",
         ".venv",
         "venv",
-        "dist",
-        "build",
-        ".next",
-        ".nuxt",
+        ".eggs",
+        "htmlcov",
+        ".ipynb_checkpoints",
+        // Rust / C / C++ / Zig
         "target",
-        ".turbo",
-        ".cache",
-        "coverage",
+        "cmake-build-debug",
+        "cmake-build-release",
+        ".zig-cache",
+        "zig-out",
+        // Java / Kotlin / Scala / Android
         ".gradle",
+        ".bsp",
+        ".bloop",
+        ".metals",
+        // iOS / macOS / Swift / Flutter / Dart
+        "Pods",
+        "DerivedData",
+        ".build",
+        ".dart_tool",
+        // Ruby / PHP / Elixir / .NET
+        "vendor",
+        "_build",
+        "deps",
+        "obj",
+        // Cloud / Infra / DevOps
+        ".terraform",
+        ".terragrunt-cache",
+        "cdk.out",
+        // General Caches & Temp
+        ".cache",
+        ".tmp",
+        "tmp",
     ]
     .into_iter()
     .map(String::from)
@@ -117,7 +175,16 @@ impl Config {
         }
         if cfg.purge_patterns.is_empty() {
             cfg.purge_patterns = default_purge_patterns();
+        } else {
+            for p in default_purge_patterns() {
+                if !cfg.purge_patterns.contains(&p) {
+                    cfg.purge_patterns.push(p);
+                }
+            }
         }
+        // Ensure purge patterns are not shadowed by legacy ignore_patterns
+        cfg.ignore_patterns
+            .retain(|ig| !cfg.purge_patterns.contains(ig));
         Ok(cfg)
     }
 

@@ -78,18 +78,18 @@ pub fn scan(opts: &ScanOptions) -> Result<ScanResult> {
         }
         let name = entry.file_name().to_string_lossy();
 
-        if ignore_set.contains(name.as_ref()) {
-            if entry.file_type().is_dir() {
-                it.skip_current_dir();
-            }
-            continue;
-        }
-
         if entry.file_type().is_dir() && purge_set.contains(name.as_ref()) {
             if opts.enable_purge {
                 raw_purge_dirs.push(path.to_path_buf());
             }
             it.skip_current_dir();
+            continue;
+        }
+
+        if ignore_set.contains(name.as_ref()) {
+            if entry.file_type().is_dir() {
+                it.skip_current_dir();
+            }
             continue;
         }
 
